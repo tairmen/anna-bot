@@ -44,7 +44,7 @@ const forecasts = [
   'Вас ждут новые знакомства.',
   'Ваши усилия будут вознаграждены.',
   'Вас ждет романтическое приключение.',
-  'Ваша мечта скоро сбудется.',
+  'Ваша мечта сбудется.',
   'Вы достигнете поставленной цели.',
   'Вас ждут положительные изменения.',
   'Ваши идеи будут поддержаны.',
@@ -76,7 +76,7 @@ bot.on('message', (msg) => {
     } else if (user.step === 1) {
       user.responses.push(msg.text);
       const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
-      bot.sendMessage(chatId, `Спасибо, ${user.userName}! Ваш прогноз на жизнь: ${forecast}`);
+      bot.sendMessage(chatId, `Спасибо, ${user.userName}! Ваш прогноз на завтра: ${forecast}`);
       delete userState[chatId];  // Сброс состояния пользователя
     }
   });
