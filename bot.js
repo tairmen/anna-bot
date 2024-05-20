@@ -57,30 +57,28 @@ let userState = {};
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  userState[chatId] = { step: 0, responses: [] };
-  bot.sendMessage(chatId, 'Привет! Как вас зовут?');
+  const userName = msg.from.first_name || msg.from.username;
+  userState[chatId] = { step: 0, responses: [], userName: userName };
+  bot.sendMessage(chatId, `Привет, ${userName}! Ответьте на несколько вопросов.`);
+  bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
 });
 
 bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  const user = userState[chatId];
-
-  if (!user) return;
-
-  if (user.step === 0) {
-    user.responses.push(msg.text);
-    user.step++;
-    bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
-  } else if (user.step === 1) {
-    user.responses.push(msg.text);
-    user.step++;
-    bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
-  } else if (user.step === 2) {
-    user.responses.push(msg.text);
-    const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
-    bot.sendMessage(chatId, `Спасибо, ${user.responses[0]}! Ваш прогноз на завтра: ${forecast}`);
-    delete userState[chatId];  // Сброс состояния пользователя
-  }
-});
+    const chatId = msg.chat.id;
+    const user = userState[chatId];
+  
+    if (!user || msg.text.startsWith('/')) return;
+  
+    if (user.step === 0) {
+      user.responses.push(msg.text);
+      user.step++;
+      bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
+    } else if (user.step === 1) {
+      user.responses.push(msg.text);
+      const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
+      bot.sendMessage(chatId, `Спасибо, ${user.userName}! Ваш прогноз на жизнь: ${forecast}`);
+      delete userState[chatId];  // Сброс состояния пользователя
+    }
+  });
 
 console.log('Бот запущен!');
