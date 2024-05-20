@@ -1,28 +1,86 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 // Вставьте сюда ваш токен, полученный от BotFather
-const token = '7013284240:AAGcL1BJQEfrOtWrgoU-JAvrm1ednGr3ZLk';
+const token = 'ВАШ_ТОКЕН';
 
 // Создайте экземпляр бота
 const bot = new TelegramBot(token, { polling: true });
 
-// Обработчик команды /start
+// Вопросы и прогнозы
+const questions = [
+  'Какое ваше любимое блюдо?',
+  'Какое ваше любимое хобби?',
+  'Какую книгу вы читали последней?',
+  'Какая ваша любимая музыка?',
+  'Какой у вас любимый фильм?',
+  'Какое место вы бы хотели посетить?',
+  'Какая у вас любимая погода?',
+  'Какие у вас домашние животные?',
+  'Какой ваш любимый цвет?',
+  'Какую кухню мира вы предпочитаете?',
+  'Какой у вас любимый вид спорта?',
+  'Какой у вас любимый праздник?',
+  'Какие у вас планы на выходные?',
+  'Какие ваши любимые цветы?',
+  'Какая ваша любимая книга?',
+  'Какие языки вы знаете?',
+  'Какую страну вы хотите посетить?',
+  'Какие у вас любимые игры?',
+  'Какая ваша любимая цитата?',
+  'Какой ваш любимый сезон года?'
+];
+
+const forecasts = [
+  'Вам предстоит удивительное приключение!',
+  'Скоро вы встретите старого друга.',
+  'Вас ждет успех в новом проекте.',
+  'Ожидайте приятного сюрприза.',
+  'Вас ждет финансовый успех.',
+  'Вы найдете решение старой проблемы.',
+  'Ваша энергия и энтузиазм принесут вам успех.',
+  'Вы получите хорошие новости.',
+  'Вас ждет неожиданное путешествие.',
+  'Вы сделаете важное открытие.',
+  'Вас ждут новые знакомства.',
+  'Ваши усилия будут вознаграждены.',
+  'Вас ждет романтическое приключение.',
+  'Ваша мечта скоро сбудется.',
+  'Вы достигнете поставленной цели.',
+  'Вас ждут положительные изменения.',
+  'Ваши идеи будут поддержаны.',
+  'Вы обретете внутренний покой.',
+  'Вас ждут радостные события.',
+  'Вы получите поддержку от друзей.'
+];
+
+let userState = {};
+
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Привет! Я ваш бот.');
+  userState[chatId] = { step: 0, responses: [] };
+  bot.sendMessage(chatId, 'Привет! Как вас зовут?');
 });
 
-// Обработчик текстовых сообщений
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-  // Повторяем полученное сообщение
-  bot.sendMessage(chatId, `Вы написали: ${msg.text}`);
-});
+  const user = userState[chatId];
 
-// Дополнительный обработчик команды /help
-bot.onText(/\/help/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Помощь: вы можете использовать команды /start и /help.');
+  if (!user) return;
+
+  if (user.step === 0) {
+    user.responses.push(msg.text);
+    user.step++;
+    bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
+  } else if (user.step === 1) {
+    user.responses.push(msg.text);
+    user.step++;
+    bot.sendMessage(chatId, questions[Math.floor(Math.random() * questions.length)]);
+  } else if (user.step === 2) {
+    user.responses.push(msg.text);
+    const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
+    bot.sendMessage(chatId, `Спасибо, ${user.responses[0]}! Ваш прогноз на жизнь: ${forecast}`);
+    delete userState[chatId];  // Сброс состояния пользователя
+  }
 });
 
 console.log('Бот запущен!');
