@@ -78,7 +78,7 @@ bot.on('message', (msg) => {
   } else if (user.step === 2) {
     user.responses.push(msg.text);
     const forecast = forecasts[Math.floor(Math.random() * forecasts.length)];
-    bot.sendMessage(chatId, `Спасибо, ${user.responses[0]}! Ваш прогноз на жизнь: ${forecast}`);
+    bot.sendMessage(chatId, `Спасибо, ${user.responses[0]}! Ваш прогноз на завтра: ${forecast}`);
     delete userState[chatId];  // Сброс состояния пользователя
   }
 });
